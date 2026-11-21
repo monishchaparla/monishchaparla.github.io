@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0b0b0c;
+  --color-panel: #151517;
+  --color-line: #2a2a2e;
+  --color-ink: #f4f4f5;
+  --color-muted: #a1a1aa;
+  --color-red: #e50914;
+  --font-display: "Bebas Neue", Impact, sans-serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-bg);
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.display {
+  font-family: var(--font-display);
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+}
+
+.wrap {
+  width: min(1200px, 100% - 48px);
+  margin-inline: auto;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 15px;
+  transition: transform 0.15s, background 0.15s;
+  cursor: pointer;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0) scale(0.98); }
+.btn-solid { background: var(--color-ink); color: #0b0b0c; }
+.btn-solid:hover { background: #fff; }
+.btn-ghost { background: rgba(109, 109, 110, 0.55); color: #fff; }
+.btn-ghost:hover { background: rgba(109, 109, 110, 0.8); }
+
+.rail {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding: 8px 0 24px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: #3a3a3e transparent;
+}
+.poster {
+  position: relative;
+  flex: 0 0 260px;
+  height: 380px;
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: left;
+  scroll-snap-align: start;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.poster:hover { transform: translateY(-4px) scale(1.02); border-color: #ffffff55; }
+.poster:focus-visible, .btn:focus-visible, a:focus-visible, button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn, .poster { transition: none; }
+}
+
+@media (max-width: 640px) {
+  .poster { flex-basis: 220px; height: 330px; }
+}
