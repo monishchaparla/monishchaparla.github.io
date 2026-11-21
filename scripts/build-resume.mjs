@@ -16,7 +16,7 @@ const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, 
 const short = (u) => u.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "");
 
 const contact = [
-  ["Visakhapatnam, Andhra Pradesh", null],
+  ["Visakhapatnam, India", null],
   [resume.phone, null],
   [profile.email, `mailto:${profile.email}`],
   ["Portfolio: " + short(resume.portfolio), resume.portfolio],
@@ -24,37 +24,39 @@ const contact = [
   ["LinkedIn: chaparla-monish", profile.linkedin],
 ];
 
-const mainProjects = projects.filter((p) => ["pathguard", "teju", "resume-analyzer", "railway"].includes(p.id));
+// Strongest first; the resume is kept to one page, so older projects live on the portfolio only.
+const RESUME_PROJECTS = { carbontrace: 4, pathguard: 3, "health-buddy": 2 };
+const mainProjects = Object.keys(RESUME_PROJECTS).map((id) => projects.find((p) => p.id === id)).filter(Boolean);
 const projLine = (p) => p.stack.join(", ");
-const projLink = (p) => p.links[0]?.href;
-const projectBullets = (p) => (p.id === "pathguard" || p.id === "teju" ? p.bullets.slice(0, 3) : p.bullets);
+const projectBullets = (p) => p.bullets.slice(0, RESUME_PROJECTS[p.id]);
+const projTitle = (p) => (p.note === "In development." ? `${p.title} (in progress)` : p.title);
+const linkLabel = (l) => (l.label.startsWith("Live") ? "Live: " : "") + short(l.href);
 const amazon = projects.find((p) => p.id === "amazon-ml");
+const ACCENT = "#0F4C5C"; // deep teal: prints well in greyscale and stays ATS-neutral
 
 const certs = [
-  "Amazon ML Challenge 2026: recall 99.6%, F0.5 0.98.",
   "Academic excellence: Class XII 98.4%, Class X 96.83%, B.Tech CGPA 8.7/10.",
   "NPTEL certified: Quantum Computing; Software Engineering.",
-  "District-level champion in Cricket and Badminton.",
-  "Reading Comprehensive Assessment (RCA), FFE Foundation.",
+  "District-level champion in cricket and badminton.",
 ];
 
 // ---------- HTML (for the PDF) ----------
 const link = (t, h) => (h ? `<a href="${h}">${esc(t)}</a>` : esc(t));
 const html = `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${profile.name} - Resume</title>
 <style>
-@page { size: A4; margin: 12mm 14mm; }
+@page { size: A4; margin: 9mm 12mm; }
 * { box-sizing: border-box; }
-body { font: 9.6pt/1.32 "Calibri", "Segoe UI", Arial, sans-serif; color: #111; margin: 0; }
-a { color: #0b4f9c; text-decoration: none; }
-h1 { font-size: 22pt; margin: 0; letter-spacing: .5px; }
+body { font: 9.5pt/1.28 "Calibri", "Segoe UI", Arial, sans-serif; color: #111; margin: 0; }
+a { color: ${ACCENT}; text-decoration: none; }
+h1 { font-size: 22pt; margin: 0; letter-spacing: .5px; color: ${ACCENT}; }
 .sub { color: #333; margin: 1px 0 3px; }
 .contact { color: #222; font-size: 8.8pt; }
 .contact span + span::before { content: "  |  "; color: #888; }
-h2 { font-size: 10.5pt; letter-spacing: 1px; border-bottom: 1.2px solid #111; padding-bottom: 1px; margin: 9px 0 4px; text-transform: uppercase; }
+h2 { font-size: 10.5pt; letter-spacing: .6px; color: ${ACCENT}; border-bottom: 1.2px solid ${ACCENT}; padding-bottom: 1px; margin: 7px 0 3px; text-transform: uppercase; }
 .row { display: flex; justify-content: space-between; gap: 8px; }
 .row b { font-weight: 700; }
 .muted { color: #444; }
-ul { margin: 2px 0 4px 15px; padding: 0; }
+ul { margin: 1px 0 3px 15px; padding: 0; }
 li { margin: 0 0 1px; }
 .item { margin-bottom: 5px; break-inside: avoid; }
 .skills div { margin-bottom: 1.5px; }
@@ -66,28 +68,26 @@ li { margin: 0 0 1px; }
 <h2>Professional Summary</h2><div>${esc(resume.summary)}</div>
 
 <h2>Education</h2>
-${resume.education.map((e) => `<div class="row"><div><b>${esc(e.school)}</b> | ${esc(e.degree)}</div><div>${esc(e.years)}</div></div><div class="muted">${esc(e.score)}</div>`).join("")}
-<div class="muted"><b>Relevant coursework:</b> ${esc(resume.coursework)}</div>
+${resume.education.map((e) => `<div class="row"><div><b>${esc(e.school)}</b> | ${esc(e.degree)} | ${esc(e.score)}</div><div>${esc(e.years)}</div></div>`).join("")}
 
 <h2>Technical Skills</h2>
 <div class="skills">${resume.skills.map(([k, v]) => `<div><b>${esc(k)}:</b> ${esc(v)}</div>`).join("")}</div>
 
-<h2>Competitions & Experience</h2>
-<div class="item"><div class="row"><div><b>${esc(resume.competition.title)}</b> | ${esc(resume.competition.role)}</div><div>${resume.competition.year}</div></div>
-<ul>${resume.competition.bullets.map((b) => `<li>${esc(b)}</li>`).join("")}</ul>
-<div class="muted">Code: ${link(short(amazon.links[0].href), amazon.links[0].href)}</div></div>
-
 <h2>Projects</h2>
-${mainProjects.map((p) => `<div class="item"><div class="row"><div><b>${esc(p.title)}</b> | ${esc(projLine(p))}${projLink(p) ? ` | ${link(short(projLink(p)), projLink(p))}` : ""}</div><div>${p.year}</div></div>
+${mainProjects.map((p) => `<div class="item"><div class="row"><div><b>${esc(projTitle(p))}</b> | ${esc(projLine(p))}</div><div>${p.year}</div></div>
+${p.links.length ? `<div class="muted">${p.links.map((l) => link(linkLabel(l), l.href)).join("  |  ")}</div>` : ""}
 <ul>${projectBullets(p).map((b) => `<li>${esc(b)}</li>`).join("")}</ul></div>`).join("")}
+
+<h2>Competitions</h2>
+<div class="item"><div class="row"><div><b>${esc(resume.competition.title)}</b> | ${esc(resume.competition.role)}</div><div>${resume.competition.year}</div></div>
+<div class="muted">${link(short(amazon.links[0].href), amazon.links[0].href)}</div>
+<ul>${resume.competition.bullets.map((b) => `<li>${esc(b)}</li>`).join("")}</ul></div>
 
 <h2>Achievements & Certifications</h2>
 <ul>${certs.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
 
-<h2>Leadership & Extracurricular</h2>
-<ul>${resume.leadership.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>
-
-<h2>Languages</h2><div>${esc(resume.languages)}</div>
+<h2>Additional</h2>
+<ul>${resume.leadership.map((c) => `<li>${esc(c)}</li>`).join("")}<li>Languages: ${esc(resume.languages)}</li></ul>
 </body></html>`;
 
 const htmlPath = path.resolve(OUT, "Chaparla_Monish_Resume.html");
@@ -115,11 +115,12 @@ copyFileSync(pdfPath, path.resolve("public", "Chaparla_Monish_Resume.pdf"));
 // ---------- DOCX ----------
 const FONT = "Calibri";
 const run = (text, o = {}) => new TextRun({ text, font: FONT, size: 19, ...o });
-const linkRun = (t, h) => new ExternalHyperlink({ link: h, children: [run(t, { color: "0B4F9C" })] });
+const ACCENT_HEX = ACCENT.slice(1);
+const linkRun = (t, h) => new ExternalHyperlink({ link: h, children: [run(t, { color: ACCENT_HEX })] });
 const h2 = (t) => new Paragraph({
   spacing: { before: 160, after: 60 },
-  border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: "111111", space: 1 } },
-  children: [run(t.toUpperCase(), { bold: true, size: 21 })],
+  border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: ACCENT_HEX, space: 1 } },
+  children: [run(t.toUpperCase(), { bold: true, size: 21, color: ACCENT_HEX })],
 });
 const bullet = (t) => new Paragraph({ bullet: { level: 0 }, spacing: { after: 20 }, children: [run(t)] });
 const para = (children, o = {}) => new Paragraph({ spacing: { after: 20 }, children, ...o });
@@ -130,33 +131,26 @@ const rowTabbed = (left, right) => new Paragraph({
 });
 
 const children = [
-  new Paragraph({ children: [run(profile.name.toUpperCase(), { bold: true, size: 44 })] }),
+  new Paragraph({ children: [run(profile.name.toUpperCase(), { bold: true, size: 44, color: ACCENT_HEX })] }),
   para([run(resume.headline)]),
   para(contact.flatMap(([t, h], i) => [i ? run("  |  ", { color: "888888" }) : run(""), h ? linkRun(t, h) : run(t)])),
   h2("Professional Summary"), para([run(resume.summary)]),
   h2("Education"),
-  ...resume.education.flatMap((e) => [
-    rowTabbed([run(e.school, { bold: true }), run(" | " + e.degree)], e.years),
-    para([run(e.score, { color: "444444" })]),
-  ]),
-  para([run("Relevant coursework: ", { bold: true }), run(resume.coursework)]),
+  ...resume.education.map((e) => rowTabbed([run(e.school, { bold: true }), run(` | ${e.degree} | ${e.score}`)], e.years)),
   h2("Technical Skills"),
   ...resume.skills.map(([k, v]) => para([run(k + ": ", { bold: true }), run(v)])),
-  h2("Competitions & Experience"),
-  rowTabbed([run(resume.competition.title, { bold: true }), run(" | " + resume.competition.role)], resume.competition.year),
-  ...resume.competition.bullets.map(bullet),
-  para([run("Code: "), linkRun(short(amazon.links[0].href), amazon.links[0].href)]),
   h2("Projects"),
   ...mainProjects.flatMap((p) => [
-    rowTabbed(
-      [run(p.title, { bold: true }), run(" | " + projLine(p)), ...(projLink(p) ? [run(" | "), linkRun(short(projLink(p)), projLink(p))] : [])],
-      p.year,
-    ),
+    rowTabbed([run(projTitle(p), { bold: true }), run(" | " + projLine(p))], p.year),
+    ...(p.links.length ? [para(p.links.flatMap((l, i) => [i ? run("  |  ", { color: "888888" }) : run(""), linkRun(linkLabel(l), l.href)]))] : []),
     ...projectBullets(p).map(bullet),
   ]),
+  h2("Competitions"),
+  rowTabbed([run(resume.competition.title, { bold: true }), run(" | " + resume.competition.role)], resume.competition.year),
+  para([linkRun(short(amazon.links[0].href), amazon.links[0].href)]),
+  ...resume.competition.bullets.map(bullet),
   h2("Achievements & Certifications"), ...certs.map(bullet),
-  h2("Leadership & Extracurricular"), ...resume.leadership.map(bullet),
-  h2("Languages"), para([run(resume.languages)]),
+  h2("Additional"), ...resume.leadership.map(bullet), bullet(`Languages: ${resume.languages}`),
 ];
 
 const doc = new Document({

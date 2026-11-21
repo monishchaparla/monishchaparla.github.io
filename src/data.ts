@@ -31,6 +31,30 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    id: "carbontrace",
+    title: "CarbonTrace AI",
+    tag: "AI · ESG · Full-stack",
+    year: "2026",
+    blurb:
+      "Turns bills, invoices and freight manifests into audit-ready Scope 1, 2 and 3 emissions, with every number traced back to its line on the source document.",
+    bullets: [
+      "Gemini structured extraction with bounding boxes, then deterministic validation that flags kWh/MWh misprints, bad periods and future dates for human review.",
+      "Maps lines to 3,639 official emission factors (EPA, UK DESNZ 2026, India CEA v22) with rules, BM25 retrieval and a model pick limited to the shortlist.",
+      "Exact Decimal and unit-checked maths, an append-only audit log, and a pdf.js view that highlights each ledger line on the original page.",
+      "Benchmark on 50 held-out synthetic documents: 100% line extraction and factor match, 10/10 problems flagged, 0 false flags, 8.4 s median.",
+    ],
+    stack: ["Python", "FastAPI", "Gemini", "Next.js", "TypeScript", "pdf.js", "Vercel"],
+    links: [
+      { label: "Live demo", href: "https://carbontrace-three.vercel.app" },
+      { label: "Source on GitHub", href: "https://github.com/monishchaparla/carbontrace-ai" },
+    ],
+    metrics: [
+      { label: "Factor match (held-out)", value: "100%" },
+      { label: "False flags", value: "0/41" },
+    ],
+    hue: "linear-gradient(145deg,#0d9488 0%,#115e59 55%,#04201d 100%)",
+  },
+  {
     id: "pathguard",
     title: "PathGuard-AI",
     tag: "Computer Vision · Geospatial",
@@ -69,21 +93,21 @@ export const projects: Project[] = [
     hue: "linear-gradient(145deg,#f59e0b 0%,#b45309 50%,#1c1003 100%)",
   },
   {
-    id: "teju",
-    title: "Teju Health AI",
-    tag: "AI Agent · Health & Fitness",
+    id: "health-buddy",
+    title: "Health Buddy",
+    tag: "AI · Nutrition · Android",
     year: "2026",
     blurb:
-      "A family fitness companion: food logging, exercise tracking and an AI agent that turns each person's goals into daily guidance.",
+      "An Indian family nutrition coach: log meals in English or Telugu by text, photo or barcode, and see each family member's day alongside Health Connect data.",
     bullets: [
-      "Agent that reads a person's goals and inputs, reasons over them and returns clear diet and exercise suggestions.",
-      "Designed around what a whole family needs in one place: meals, workouts, activity goals and shared progress.",
-      "End-to-end design combining an AI pipeline with a user-facing interface.",
+      "Separate logins with a family section for managing members, including children under parental consent.",
+      "AI identifies dishes and portions; nutrition and calorie targets are computed deterministically from a food database.",
+      "Android companion syncs steps, sleep and heart rate from Health Connect to the same account.",
     ],
-    stack: ["Python", "LLM agent", "React"],
-    links: [],
-    note: "Demo coming soon.",
-    hue: "linear-gradient(145deg,#10b981 0%,#065f46 55%,#021a12 100%)",
+    stack: ["Next.js", "FastAPI", "Gemini", "Expo", "Health Connect"],
+    links: [{ label: "Source on GitHub", href: "https://github.com/monishchaparla/health-buddy" }],
+    note: "In development.",
+    hue: "linear-gradient(145deg,#65a30d 0%,#3f6212 55%,#0f1a04 100%)",
   },
   {
     id: "resume-analyzer",
@@ -130,11 +154,11 @@ export const seasons = [
 ];
 
 export const skillGroups = [
-  { name: "Languages", items: ["Python", "C++", "C", "Java", "JavaScript", "SQL"] },
-  { name: "Machine learning", items: ["scikit-learn", "LightGBM", "pandas", "NumPy", "NLP", "YOLOv8", "Feature engineering"] },
-  { name: "Web", items: ["React", "FastAPI", "Flask", "REST APIs", "HTML5", "CSS3", "PHP"] },
-  { name: "Data", items: ["MySQL", "Oracle SQL", "PostGIS", "Supabase"] },
-  { name: "Tools", items: ["Git", "GitHub", "Linux CLI", "Postman", "Figma", "Canva", "Jupyter"] },
+  { name: "Languages", items: ["Python", "TypeScript", "JavaScript", "C++", "Java", "SQL"] },
+  { name: "AI and machine learning", items: ["LLM structured output", "BM25 retrieval", "Model evaluation", "scikit-learn", "LightGBM", "pandas", "YOLOv8"] },
+  { name: "Backend", items: ["FastAPI", "REST APIs", "SQLite", "PostgreSQL / PostGIS", "Supabase", "pytest"] },
+  { name: "Frontend", items: ["Next.js", "React", "Tailwind CSS", "pdf.js"] },
+  { name: "Tools and cloud", items: ["Git", "GitHub", "Vercel", "Linux CLI", "Postman", "Figma"] },
 ];
 
 export const achievements = [
@@ -150,7 +174,7 @@ export const resume = {
   portfolio: "https://monish-portfolio-rho.vercel.app",
   headline: "B.Tech Computer Science & Software Engineering | Software Development | Machine Learning",
   summary:
-    "Computer Science & Software Engineering undergraduate at Andhra University (CGPA 8.7/10) with strong foundations in data structures, algorithms, OOP, DBMS, operating systems and computer networks. Built machine learning systems (road-damage detection with YOLOv8, business entity resolution with gradient boosting) and full-stack applications in React, FastAPI and MySQL. Seeking software development, machine learning and full-stack internships.",
+    "Computer Science undergraduate at Andhra University (CGPA 8.7/10) who builds and deploys AI products end to end. Shipped CarbonTrace AI, an audit-grade carbon accounting app with measured accuracy on a held-out benchmark, built PathGuard-AI for road-damage detection with YOLOv8, and scored 99.6% recall in the Amazon ML Challenge 2026. Seeking software development and machine learning internships.",
   coursework:
     "Data Structures & Algorithms, DBMS, Object-Oriented Programming, Operating Systems, Computer Networks, Web Technologies, Software Engineering",
   education: [
@@ -159,13 +183,12 @@ export const resume = {
     { school: "Sasi English Medium School, Andhra Pradesh", degree: "Class X (SSC)", years: "2020 – 2022", score: "96.83%" },
   ],
   skills: [
-    ["Languages", "C, C++, Java, Python, JavaScript, SQL"],
-    ["Data Structures & Algorithms", "Arrays, Strings, Linked Lists, Stacks, Queues, Trees, Graphs, Hashing, Heaps, Recursion, Dynamic Programming, Greedy, Sorting & Searching, Complexity Analysis"],
-    ["Machine Learning", "scikit-learn, LightGBM, pandas, NumPy, NLP, YOLOv8, Feature Engineering, Model Evaluation, AI Agents"],
-    ["Web Development", "HTML5, CSS3, JavaScript (ES6+), React, Flask, FastAPI, PHP, REST APIs, Responsive Design"],
-    ["Databases", "MySQL, Oracle SQL, PostgreSQL/PostGIS, Supabase, Normalization, Indexing, Joins, Transactions"],
-    ["Core CS", "OOP, Operating Systems, Computer Networks (TCP/IP, HTTP, DNS), SDLC, Agile, System Design Fundamentals"],
-    ["Tools", "Git, GitHub, VS Code, Linux CLI, Postman, Figma, Canva, Jupyter Notebook"],
+    ["Languages", "Python, TypeScript, JavaScript, C++, Java, SQL"],
+    ["AI / ML", "LLM structured output (Gemini), prompt-injection safeguards, BM25 retrieval, evaluation benchmarks, scikit-learn, LightGBM, pandas, NumPy, YOLOv8"],
+    ["Backend", "FastAPI, REST APIs, SQLite, PostgreSQL/PostGIS, Supabase, MySQL, pytest, API-key auth"],
+    ["Frontend", "Next.js, React, Tailwind CSS, pdf.js, Recharts, accessible responsive UI"],
+    ["Cloud & Tools", "Vercel, Git, GitHub, Linux CLI, Postman, Figma, Jupyter"],
+    ["Core CS", "Data Structures & Algorithms, OOP, DBMS, Operating Systems, Computer Networks"],
   ] as [string, string][],
   competition: {
     title: "Amazon ML Challenge 2026",
@@ -178,8 +201,7 @@ export const resume = {
     ],
   },
   leadership: [
-    "FLY Program and mentor sessions, FFE Foundation: leadership and professional effectiveness.",
-    "Content creation and outreach: articles and LinkedIn posts, Canva posters and carousels, campaign planning.",
+    "FLY Program and mentor sessions, FFE Foundation; content creation and outreach (articles, LinkedIn, Canva campaigns).",
   ],
   languages: "English (Proficient) | Telugu (Native) | Hindi (Proficient)",
 };
